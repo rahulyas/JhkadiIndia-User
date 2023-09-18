@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Jhakadi</string>
+
+    <string name="former"><font fgcolor='#E5580A'>J</font><font fgcolor='#346907'> H A K A D I</font></string>
+    <string name="signin">Sign In to Your Account</string>
+    <string name="createaccount">Create New Account</string>
+    <string name="changepassword">Change Your Password</string>
+</resources>
