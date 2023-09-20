@@ -48,6 +48,7 @@ public class SignInActivity extends AppCompatActivity {
                 else
                 {
                     signIn(mail,Password);
+
                 }
             }
         });

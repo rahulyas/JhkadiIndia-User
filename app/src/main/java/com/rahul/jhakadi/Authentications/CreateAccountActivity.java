@@ -24,8 +24,6 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.rahul.jhakadi.Manifest;
-import com.rahul.jhakadi.R;
 import com.rahul.jhakadi.Util;
 import com.rahul.jhakadi.databinding.ActivityCreateAccountBinding;
 
@@ -75,6 +73,12 @@ public class CreateAccountActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Create user account
+     * @param email
+     * @param name
+     * @param password
+     */
     private void CreateUserAccount(String email, final String name, String password) {
         //this method create user account with specific email password
         firebaseAuth.createUserWithEmailAndPassword(email, password)
@@ -82,10 +86,10 @@ public class CreateAccountActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            //user account create succesful
-                            new Util().showMessage(CreateAccountActivity.this, "Account created");
                             //after creating account now we update user information like name picture
                             updateUserInfo(name, pickedImaUri, firebaseAuth.getCurrentUser());
+                            //user account create succesful
+                            new Util().showMessage(CreateAccountActivity.this, "Account created");
                         } else {
                             //account creation failed
                             new Util().showMessage(CreateAccountActivity.this, "Account creation failed" + task.getException());
@@ -98,7 +102,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(CreateAccountActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(CreateAccountActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                new Util().showMessage(CreateAccountActivity.this, "Please accept forreuired permission");
+                new Util().showMessage(CreateAccountActivity.this, "Please accept for reuired permission");
             } else {
                 ActivityCompat.requestPermissions(CreateAccountActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
                         PRegCode);
@@ -108,15 +112,18 @@ public class CreateAccountActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * the user has successfully picked an image
+     * we need to save its reference to a Uri variable
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK && requestCode == REQUESCODE && data != null) {
-
-            //the user has successfully picked an image
-            //we need to save its reference to a Uri variable
-
             pickedImaUri = data.getData();
             binding.userProfilepic.setImageURI(pickedImaUri);
         }
@@ -132,8 +139,12 @@ public class CreateAccountActivity extends AppCompatActivity {
 
     }
 
-    /// update user photo and name
-
+    /**
+     *  update user photo and name
+     * @param username
+     * @param pickedImaUri
+     * @param currentUser
+     */
     private void updateUserInfo(final String username, Uri pickedImaUri, final FirebaseUser currentUser) {
 
         //first we need to upload user photo to firebase storage and get url
