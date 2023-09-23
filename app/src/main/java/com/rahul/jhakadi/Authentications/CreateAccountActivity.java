@@ -1,29 +1,44 @@
 package com.rahul.jhakadi.Authentications;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.rahul.jhakadi.R;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.rahul.jhakadi.Util;
 import com.rahul.jhakadi.databinding.ActivityCreateAccountBinding;
 
 public class CreateAccountActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private ActivityCreateAccountBinding binding;
+    int PRegCode = 1;
+    int REQUESCODE = 1;
+    Uri pickedImaUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityCreateAccountBinding.inflate(getLayoutInflater());
-        View view = binding.getRoot();
-        setContentView(view);
+        setContentView(binding.getRoot());
         firebaseAuth = FirebaseAuth.getInstance();
         binding.signupbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -36,17 +51,34 @@ public class CreateAccountActivity extends AppCompatActivity {
 
                 if (name.isEmpty() || email.isEmpty() || password.isEmpty() || phonetext.isEmpty()) {
                     ///we need to display a error message
-                    showMessage("Please fill all fields");
-                    binding.signupbutton.setVisibility(View.VISIBLE);
+                    new Util().showMessage(CreateAccountActivity.this, "Please fill all fields");
                 } else if (!password.equals(password2)) {
-                    showMessage("Password are not matching");
+                    new Util().showMessage(CreateAccountActivity.this, "Password are not matching");
                 } else {
                     CreateUserAccount(email, name, password);
                 }
             }
         });
+
+        binding.userProfilepic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (Build.VERSION.SDK_INT >= 22) {
+                    checkAndRequestedForPermission();
+                } else {
+                    openGallery();
+                }
+
+            }
+        });
     }
 
+    /**
+     * Create user account
+     * @param email
+     * @param name
+     * @param password
+     */
     private void CreateUserAccount(String email, final String name, String password) {
         //this method create user account with specific email password
         firebaseAuth.createUserWithEmailAndPassword(email, password)
@@ -54,28 +86,66 @@ public class CreateAccountActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            //user account create succesful
-                            showMessage("Account created");
                             //after creating account now we update user information like name picture
-                            //updateUserInfo(name ,pickedImaUri,firebaseAuth.getCurrentUser());
+                            updateUserInfo(name, pickedImaUri, firebaseAuth.getCurrentUser());
+                            //user account create succesful
+                            new Util().showMessage(CreateAccountActivity.this, "Account created");
                         } else {
                             //account creation failed
-                            showMessage("Account creation failed" + task.getException());
-                            binding.signupbutton.setVisibility(View.VISIBLE);
+                            new Util().showMessage(CreateAccountActivity.this, "Account creation failed" + task.getException());
                         }
                     }
                 });
     }
 
-    private void showMessage(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    private void checkAndRequestedForPermission() {
+        if (ContextCompat.checkSelfPermission(CreateAccountActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(CreateAccountActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                new Util().showMessage(CreateAccountActivity.this, "Please accept for reuired permission");
+            } else {
+                ActivityCompat.requestPermissions(CreateAccountActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                        PRegCode);
+            }
+        } else {
+            openGallery();
+        }
     }
-}
 
-    /// update user photo and name
+    /**
+     * the user has successfully picked an image
+     * we need to save its reference to a Uri variable
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-/*
-    private void updateUserInfo(final String username, Uri pickedImaUri,final FirebaseUser currentUser) {
+        if (resultCode == RESULT_OK && requestCode == REQUESCODE && data != null) {
+            pickedImaUri = data.getData();
+            binding.userProfilepic.setImageURI(pickedImaUri);
+        }
+    }
+
+    /**
+     * open the gallery to pick the image
+     */
+    private void openGallery() {
+        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        galleryIntent.setType("image/*");
+        startActivityForResult(galleryIntent, REQUESCODE);
+
+    }
+
+    /**
+     *  update user photo and name
+     * @param username
+     * @param pickedImaUri
+     * @param currentUser
+     */
+    private void updateUserInfo(final String username, Uri pickedImaUri, final FirebaseUser currentUser) {
 
         //first we need to upload user photo to firebase storage and get url
 
@@ -101,9 +171,9 @@ public class CreateAccountActivity extends AppCompatActivity {
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()){
+                                        if (task.isSuccessful()) {
                                             //user information update successfully
-                                            showMessage("Register Complete");
+                                            new Util().showMessage(CreateAccountActivity.this, "Register Complete");
                                             // upadedUI();
                                         }
                                     }
@@ -112,6 +182,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                 });
             }
         });
+    }
 
+}
 
-    }*/
