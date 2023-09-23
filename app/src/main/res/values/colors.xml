@@ -3,4 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="background">#FFEDE3</color>
+    <color name="azure">#F0FFFF</color>
+    <color name="yellow">#FFFF00</color>
+
 </resources>

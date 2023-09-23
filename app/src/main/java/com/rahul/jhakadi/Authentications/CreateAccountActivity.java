@@ -21,17 +21,21 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.rahul.jhakadi.Model.UserModel;
 import com.rahul.jhakadi.Util;
 import com.rahul.jhakadi.databinding.ActivityCreateAccountBinding;
 
 public class CreateAccountActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
+    private FirebaseDatabase database;
     private ActivityCreateAccountBinding binding;
     int PRegCode = 1;
     int REQUESCODE = 1;
+
     Uri pickedImaUri;
 
     @Override
@@ -40,6 +44,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         binding = ActivityCreateAccountBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         firebaseAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
         binding.signupbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,13 +52,15 @@ public class CreateAccountActivity extends AppCompatActivity {
                 String email = binding.emailEdit.getText().toString();
                 String password = binding.passwordNameEdit.getText().toString();
                 String password2 = binding.repasswordNameEdit.getText().toString();
-                String phonetext = binding.phoneNumberEdit.getText().toString();
+                //String phonetext = binding.phoneNumberEdit.getText().toString();
 
-                if (name.isEmpty() || email.isEmpty() || password.isEmpty() || phonetext.isEmpty()) {
+                if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
                     ///we need to display a error message
                     new Util().showMessage(CreateAccountActivity.this, "Please fill all fields");
                 } else if (!password.equals(password2)) {
                     new Util().showMessage(CreateAccountActivity.this, "Password are not matching");
+                } else if (password.length() <6 ) {
+                    new Util().showMessage(CreateAccountActivity.this,"Password lengthmust be greater then 6 letter");
                 } else {
                     CreateUserAccount(email, name, password);
                 }
@@ -87,9 +94,15 @@ public class CreateAccountActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             //after creating account now we update user information like name picture
-                            updateUserInfo(name, pickedImaUri, firebaseAuth.getCurrentUser());
+                            //updateUserInfo(name, pickedImaUri, firebaseAuth.getCurrentUser());
+                            UserModel userModel = new UserModel(name, email, password);
+                            String id = task.getResult().getUser().getUid();
+                            database.getReference().child("Users").child(id).setValue(userModel);
                             //user account create succesful
-                            new Util().showMessage(CreateAccountActivity.this, "Account created");
+                            new Util().showMessage(CreateAccountActivity.this, "Account created Successful");
+                            Intent mainactivity= new Intent(CreateAccountActivity.this, SignInActivity.class);
+                            startActivity(mainactivity);
+                            finish();
                         } else {
                             //account creation failed
                             new Util().showMessage(CreateAccountActivity.this, "Account creation failed" + task.getException());

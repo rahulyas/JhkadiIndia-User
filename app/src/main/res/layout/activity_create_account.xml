@@ -39,7 +39,7 @@
                 android:layout_marginTop="55dp"
                 android:text="@string/createaccount"
                 android:textColor="@color/black"
-                android:textSize="15sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -50,6 +50,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_margin="10dp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textview0"
@@ -70,6 +71,7 @@
                 app:boxCornerRadiusTopStart="20dp"
                 app:boxStrokeWidth="0dp"
                 app:boxStrokeWidthFocused="0dp"
+                android:hint="Username"
                 app:layout_constraintTop_toBottomOf="@+id/user_profilepic">
 
                 <EditText
@@ -77,7 +79,6 @@
                     android:backgroundTint="#F8F8F8"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="username"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -94,6 +95,7 @@
                 app:boxCornerRadiusTopStart="20dp"
                 app:boxStrokeWidth="0dp"
                 app:boxStrokeWidthFocused="0dp"
+                android:hint="Email"
                 app:layout_constraintTop_toBottomOf="@+id/user_name_text_layout">
 
                 <EditText
@@ -101,7 +103,6 @@
                     android:backgroundTint="#F8F8F8"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="email"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -118,6 +119,7 @@
                 app:boxCornerRadiusTopStart="20dp"
                 app:boxStrokeWidth="0dp"
                 app:boxStrokeWidthFocused="0dp"
+                android:hint="Password"
                 app:layout_constraintTop_toBottomOf="@+id/email_text_layout">
 
                 <androidx.appcompat.widget.AppCompatEditText
@@ -125,7 +127,6 @@
                     android:backgroundTint="#F8F8F8"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="password"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -142,6 +143,7 @@
                 app:boxCornerRadiusTopStart="20dp"
                 app:boxStrokeWidth="0dp"
                 app:boxStrokeWidthFocused="0dp"
+                android:hint="re-password"
                 app:layout_constraintTop_toBottomOf="@+id/password_name_text_layout">
 
                 <androidx.appcompat.widget.AppCompatEditText
@@ -149,7 +151,6 @@
                     android:backgroundTint="#F8F8F8"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="re-password"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -166,6 +167,7 @@
                 app:boxCornerRadiusTopStart="20dp"
                 app:boxStrokeWidth="0dp"
                 app:boxStrokeWidthFocused="0dp"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@+id/repassword_name_text_layout">
 
                 <androidx.appcompat.widget.AppCompatEditText
