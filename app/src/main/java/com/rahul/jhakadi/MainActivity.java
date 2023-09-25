@@ -1,39 +1,43 @@
 package com.rahul.jhakadi;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
-import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import com.google.android.material.navigation.NavigationBarView;
+import com.google.android.material.navigation.NavigationView;
 import com.rahul.jhakadi.Adapter.BestsellerAdapter;
 import com.rahul.jhakadi.Adapter.CategoriesAdapter;
+import com.rahul.jhakadi.Adapter.FragmentAdapter;
 import com.rahul.jhakadi.Expanded.ExpandedMenuAdapter;
 import com.rahul.jhakadi.Expanded.ExpandedMenuModel;
+import com.rahul.jhakadi.Fragment.CartFragment;
+import com.rahul.jhakadi.Fragment.HomeFragment;
 import com.rahul.jhakadi.Model.BestsellerModel;
 import com.rahul.jhakadi.Model.CategoriesModel;
 import com.rahul.jhakadi.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.zip.Inflater;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private AppBarConfiguration appBarConfiguration;
     ArrayList<ExpandedMenuModel> headerList = new ArrayList<>();
+    ArrayList<Fragment> fragmentArrayList = new ArrayList<>();
     HashMap<ExpandedMenuModel, ArrayList<String>> childList = new HashMap<>();
     NavController navController;
     ExpandedMenuAdapter expandedMenuAdapter;
@@ -49,14 +53,73 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, binding.drawerLayout, 0, 0);
+        binding.drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        NavigationView navView = findViewById(R.id.nav_view);
+        fragmentArrayList.add(new HomeFragment());
+        fragmentArrayList.add(new CartFragment());
+        FragmentAdapter fragmentAdapter = new FragmentAdapter(MainActivity.this,fragmentArrayList);
+        binding.viewPager.setAdapter(fragmentAdapter);
+        binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                switch (position){
+                    case 0:
+                        binding.navBottom.setSelectedItemId(R.id.home);
+                        break;
+                    case 1:
+                        binding.navBottom.setSelectedItemId(R.id.cart);
+                        break;
+                }
+                super.onPageSelected(position);
+            }
+        });
+
+        binding.navBottom.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                switch (item.getItemId()){
+                    case R.id.navigation_item1:
+                        binding.viewPager.setCurrentItem(0);
+                        Toast.makeText(MainActivity.this, "Home Clicked", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.navigation_item2:
+                        binding.viewPager.setCurrentItem(1);
+                        Toast.makeText(MainActivity.this, "Cart Clicked", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return true;
+            }
+        });
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if(id == R.id.home){
+                    Toast.makeText(MainActivity.this, "Home Clicked", Toast.LENGTH_SHORT).show();
+                    return true;
+                }else if(id == R.id.cart){
+                    Toast.makeText(MainActivity.this, "Cart Clicked", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                return true;
+            }
+        });
+
+/*        navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
 
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph())
                 .setDrawerLayout(binding.drawerLayout)
-                .build();
+                .build();*/
+/*        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,binding.drawerLayout,)
+        prepareListData();*/
 
-        prepareListData();
-
+/*
         expandedMenuAdapter = new ExpandedMenuAdapter(this, headerList, childList, binding.expandedListView);
         binding.expandedListView.setAdapter(expandedMenuAdapter);
         binding.expandedListView.setChoiceMode(ExpandableListView.CHOICE_MODE_SINGLE);
@@ -67,7 +130,8 @@ public class MainActivity extends AppCompatActivity {
                 switch (groupPosition) {
                     case 0:
                         //navController.navigate(R.id.nav_changeproject);
-                        /*if (parent.isGroupExpanded(groupPosition))
+                        */
+/*if (parent.isGroupExpanded(groupPosition))
                         {
                             parent.collapseGroup(groupPosition);
                         }
@@ -116,7 +180,8 @@ public class MainActivity extends AppCompatActivity {
                                     return true;
                                 }
                             });
-                        }*/
+                        }*//*
+
                         break;
 
                     case 1:
@@ -126,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
+*/
 
 
 /*
