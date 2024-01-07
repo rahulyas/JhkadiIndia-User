@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -15,13 +17,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.rahul.jhakadi.Adapter.BestsellerAdapter;
+import com.rahul.jhakadi.Adapter.CategoriesAdapter;
 import com.rahul.jhakadi.Adapter.FragmentAdapter;
+import com.rahul.jhakadi.Model.BestsellerModel;
+import com.rahul.jhakadi.Model.CategoriesModel;
 import com.rahul.jhakadi.R;
 import com.rahul.jhakadi.databinding.FragmentHomeBinding;
 
+import java.util.ArrayList;
+
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
-
+    ArrayList<CategoriesModel> categoriesList;
+    ArrayList<BestsellerModel> bestsellerList;
+    BestsellerAdapter bestsellerAdapter;
+    CategoriesAdapter categoriesAdapter;
     public static HomeFragment newInstance() {
         return new HomeFragment();
     }
@@ -30,51 +41,30 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater,container,false);
         View view = binding.getRoot();
+        categoriesList = new ArrayList<>();
+        bestsellerList = new ArrayList<>();
 
-/*        FragmentAdapter fragmentAdapter = new FragmentAdapter(getChildFragmentManager(),getLifecycle());
-        binding.viewPager.setAdapter(fragmentAdapter);
+        categoriesList.add(new CategoriesModel("","A"));
+        categoriesList.add(new CategoriesModel("","B"));
+        categoriesList.add(new CategoriesModel("","C"));
+        categoriesList.add(new CategoriesModel("","D"));
+        categoriesList.add(new CategoriesModel("","E"));
 
-        binding.bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
+        bestsellerList.add(new BestsellerModel("","A","B","50"));
+        bestsellerList.add(new BestsellerModel("","B","D","25"));
+        bestsellerList.add(new BestsellerModel("","C","E","15"));
 
-                if(id == R.id.navigation_item1){
-                    binding.viewPager.setCurrentItem(0, true);
-                    return true;
-                }else if(id == R.id.navigation_item2){
-                    binding.viewPager.setCurrentItem(1, true);
-                    return true;
-                }
-*//*                switch (item.getItemId()) {
-                    case R.id.navigation_item1:
-                        binding.viewPager.setCurrentItem(0, true);
-                        return true;
-                    case R.id.navigation_item2:
-                        binding.viewPager.setCurrentItem(1, true);
-                        return true;
-                    // Add more cases as needed for each menu item
-                }*//*
-                return false;
-            }
-        });
+        bestsellerAdapter = new BestsellerAdapter(requireContext(),bestsellerList);
+        categoriesAdapter = new CategoriesAdapter(requireContext(),categoriesList);
 
-        // Add a ViewPager2 page change listener to update the selected item in BottomNavigationView
-        binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                switch (position) {
-                    case 0:
-                        binding.bottomNavigationView.setSelectedItemId(R.id.navigation_item1);
-                        break;
-                    case 1:
-                        binding.bottomNavigationView.setSelectedItemId(R.id.navigation_item2);
-                        break;
-                    // Update for additional pages
-                }
-            }
-        });*/
+        binding.categoriesrecycleview.setAdapter(categoriesAdapter);
+        binding.bestsellersrecycleview.setAdapter(bestsellerAdapter);
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(requireContext(),1, RecyclerView.HORIZONTAL,false);
+        binding.categoriesrecycleview.setLayoutManager(gridLayoutManager);
+        GridLayoutManager gridLayoutManager1 = new GridLayoutManager(requireContext(),1);
+        binding.bestsellersrecycleview.setLayoutManager(gridLayoutManager1);
+
         return view;
     }
 

@@ -1,4 +1,4 @@
-package com.rahul.jhakadi.Authentications;
+package com.rahul.jhakadi.Mvvm.Ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
